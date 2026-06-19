@@ -47,9 +47,43 @@ public class Main {
                 if (!found) {
                     System.out.println(command + ": not found");
                 }
-            }
-            else {
-                System.out.println(input + ": not found");
+            } else {
+
+                String[] parts = input.split(" ");
+                String command = parts[0];
+
+                String pathEnv = System.getenv("PATH");
+                String[] paths = pathEnv.split(File.pathSeparator);
+
+                boolean found = false;
+
+                for (String dir : paths) {
+                    File file = new File(dir, command);
+
+                    if (file.exists() && file.canExecute()) {
+                        try {
+
+                            ProcessBuilder pb = new ProcessBuilder(parts);
+
+                            pb.inheritIO();
+
+                            Process process = pb.start();
+
+                            process.waitFor();
+
+                            found = true;
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    System.out.println(command + ": not found");
+                }
             }
         }
 
