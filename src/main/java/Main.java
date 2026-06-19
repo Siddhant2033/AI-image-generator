@@ -24,21 +24,24 @@ public class Main {
 
                 File newDir;
 
-                if (path.startsWith("/")) {
+                if (path.equals("~")) {
+                    newDir = new File(System.getenv("HOME"));
+                }
+
+                else if (path.startsWith("/")) {
                     newDir = new File(path);
                 }
 
                 else {
                     newDir = new File(currentDirectory, path);
                 }
-
                 try {
                     newDir = newDir.getCanonicalFile();
                 } catch (Exception e) {
                     System.out.println("cd: " + path + ": No such file or directory");
                     continue;
                 }
-                
+
                 if (newDir.exists() && newDir.isDirectory()) {
                     currentDirectory = newDir;
                     System.setProperty("user.dir", currentDirectory.getAbsolutePath());
