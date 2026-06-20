@@ -62,13 +62,25 @@ public class Main {
                 String cmd = job.command
                         .replaceAll("\\s*&\\s*$", "");
 
-                System.out.printf(
-                        "[%d]%s  %-24s%s%n",
-                        job.jobNumber,
-                        marker,
-                        "Done",
-                        cmd
-                );
+                if (marker.equals(" ")) {
+
+                    System.out.printf(
+                            "[%d]   %-24s%s%n",
+                            job.jobNumber,
+                            "Done",
+                            cmd
+                    );
+
+                } else {
+
+                    System.out.printf(
+                            "[%d]%s  %-24s%s%n",
+                            job.jobNumber,
+                            marker,
+                            "Done",
+                            cmd
+                    );
+                }
 
                 removeJobs.add(job.jobNumber);
             }
@@ -403,21 +415,7 @@ public class Main {
                                 a.jobNumber - b.jobNumber
                 );
 
-                int total = activeJobs.size();
-
-                for (int i = 0; i < total; i++) {
-
-                    Job job = activeJobs.get(i);
-
-                    String marker = " ";
-
-                    if (i == total - 1) {
-                        marker = "+";
-                    }
-
-                    else if (i == total - 2) {
-                        marker = "-";
-                    }
+                for (Job job : activeJobs) {
 
                     String cmd =
                             job.command
@@ -428,9 +426,8 @@ public class Main {
                                     + " &";
 
                     System.out.printf(
-                            "[%d]%s  %-24s%s%n",
+                            "[%d]   %-24s%s%n",
                             job.jobNumber,
-                            marker,
                             "Running",
                             cmd
                     );
