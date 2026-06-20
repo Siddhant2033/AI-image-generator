@@ -22,6 +22,66 @@ public class Main {
         }
     }
 
+    // ================= REAP JOBS =================
+
+    static void reapJobs(Map<Integer, Job> backgroundJobs, int jobCounter) {
+
+        ArrayList<Integer> jobsToRemove = new ArrayList<>();
+
+        ArrayList<Job> activeJobs = new ArrayList<>();
+
+        for (int i = 1; i < jobCounter; i++) {
+
+            Job job = backgroundJobs.get(i);
+
+            if (job != null) {
+                activeJobs.add(job);
+            }
+        }
+
+        int total = activeJobs.size();
+
+        for (int i = 0; i < total; i++) {
+
+            Job job = activeJobs.get(i);
+
+            if (!job.process.isAlive()) {
+
+                String marker = " ";
+
+                if (total == 1) {
+                    marker = "+";
+                }
+
+                else if (i == total - 1) {
+                    marker = "+";
+                }
+
+                else if (i == total - 2) {
+                    marker = "-";
+                }
+
+                String cmd = job.command;
+
+                cmd = cmd.replaceAll("\\s*&\\s*$", "");
+
+                System.out.printf(
+                        "[%d]%s  %-24s%s%n",
+                        job.jobNumber,
+                        marker,
+                        "Done",
+                        cmd
+                );
+
+                jobsToRemove.add(job.jobNumber);
+            }
+        }
+
+        for (Integer id : jobsToRemove) {
+            backgroundJobs.remove(id);
+        }
+    }
+
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
@@ -38,9 +98,13 @@ public class Main {
                 "type",
                 "pwd",
                 "cd",
-                "jobs");
+                "jobs"
+        );
 
         while (true) {
+
+            // automatic reaping before prompt
+            reapJobs(backgroundJobs, jobCounter);
 
             System.out.print("$ ");
 
@@ -230,7 +294,8 @@ public class Main {
                     if (outputFile != null) {
 
                         PrintStream out = new PrintStream(
-                                new FileOutputStream(outputFile, appendOutput));
+                                new FileOutputStream(outputFile, appendOutput)
+                        );
 
                         out.println(currentDirectory.getAbsolutePath());
 
@@ -242,7 +307,8 @@ public class Main {
 
                     if (errorFile != null) {
                         new PrintStream(
-                                new FileOutputStream(errorFile, appendError)).close();
+                                new FileOutputStream(errorFile, appendError)
+                        ).close();
                     }
 
                 } catch (Exception e) {
@@ -285,7 +351,8 @@ public class Main {
                         if (errorFile != null) {
 
                             PrintStream err = new PrintStream(
-                                    new FileOutputStream(errorFile, appendError));
+                                    new FileOutputStream(errorFile, appendError)
+                            );
 
                             err.println("cd: " + path + ": No such file or directory");
 
@@ -317,7 +384,8 @@ public class Main {
                         if (errorFile != null) {
 
                             PrintStream err = new PrintStream(
-                                    new FileOutputStream(errorFile, appendError));
+                                    new FileOutputStream(errorFile, appendError)
+                            );
 
                             err.println("cd: " + path + ": No such file or directory");
 
@@ -337,7 +405,7 @@ public class Main {
 
             else if (command.equals("jobs")) {
 
-                ArrayList<Integer> jobsToRemove = new ArrayList<>();
+                reapJobs(backgroundJobs, jobCounter);
 
                 ArrayList<Job> activeJobs = new ArrayList<>();
 
@@ -345,7 +413,7 @@ public class Main {
 
                     Job job = backgroundJobs.get(i);
 
-                    if (job != null) {
+                    if (job != null && job.process.isAlive()) {
                         activeJobs.add(job);
                     }
                 }
@@ -355,8 +423,6 @@ public class Main {
                 for (int i = 0; i < total; i++) {
 
                     Job job = activeJobs.get(i);
-
-                    boolean alive = job.process.isAlive();
 
                     String marker = " ";
 
@@ -372,48 +438,22 @@ public class Main {
                         marker = "-";
                     }
 
-                    // ================= RUNNING =================
+                    String cmd = job.command;
 
-                    if (alive) {
-
-                        String cmd = job.command;
-
-                        if (!cmd.trim().endsWith("&")) {
-                            cmd += " &";
-                        }
-
-                        System.out.printf(
-                                "[%d]%s  %-24s%s%n",
-                                job.jobNumber,
-                                marker,
-                                "Running",
-                                cmd);
+                    if (!cmd.trim().endsWith("&")) {
+                        cmd += " &";
                     }
 
-                    // ================= DONE =================
-
-                    else {
-
-                        String cmd = job.command;
-
-                        cmd = cmd.replaceAll("\\s*&\\s*$", "");
-
-                        System.out.printf(
-                                "[%d]%s  %-24s%s%n",
-                                job.jobNumber,
-                                marker,
-                                "Done",
-                                cmd);
-
-                        jobsToRemove.add(job.jobNumber);
-                    }
-                }
-
-                // remove completed jobs AFTER printing
-                for (Integer id : jobsToRemove) {
-                    backgroundJobs.remove(id);
+                    System.out.printf(
+                            "[%d]%s  %-24s%s%n",
+                            job.jobNumber,
+                            marker,
+                            "Running",
+                            cmd
+                    );
                 }
             }
+
             // ================= ECHO =================
 
             else if (command.equals("echo")) {
@@ -434,7 +474,8 @@ public class Main {
                     if (errorFile != null) {
 
                         PrintStream err = new PrintStream(
-                                new FileOutputStream(errorFile, appendError));
+                                new FileOutputStream(errorFile, appendError)
+                        );
 
                         err.close();
                     }
@@ -442,7 +483,8 @@ public class Main {
                     if (outputFile != null) {
 
                         PrintStream fileOut = new PrintStream(
-                                new FileOutputStream(outputFile, appendOutput));
+                                new FileOutputStream(outputFile, appendOutput)
+                        );
 
                         fileOut.println(output);
 
@@ -557,10 +599,13 @@ public class Main {
                                         new Job(
                                                 currentJob,
                                                 process,
-                                                input));
+                                                input
+                                        )
+                                );
 
                                 System.out.println(
-                                        "[" + currentJob + "] " + process.pid());
+                                        "[" + currentJob + "] " + process.pid()
+                                );
                             }
 
                             // ================= FOREGROUND =================
@@ -570,9 +615,10 @@ public class Main {
                                 // STDOUT
                                 if (outputFile != null) {
 
-                                    FileOutputStream fos = new FileOutputStream(
-                                            outputFile,
-                                            appendOutput);
+                                    FileOutputStream fos =
+                                            new FileOutputStream(
+                                                    outputFile,
+                                                    appendOutput);
 
                                     process.getInputStream().transferTo(fos);
 
@@ -587,9 +633,10 @@ public class Main {
                                 // STDERR
                                 if (errorFile != null) {
 
-                                    FileOutputStream errFos = new FileOutputStream(
-                                            errorFile,
-                                            appendError);
+                                    FileOutputStream errFos =
+                                            new FileOutputStream(
+                                                    errorFile,
+                                                    appendError);
 
                                     process.getErrorStream().transferTo(errFos);
 
@@ -623,7 +670,8 @@ public class Main {
                         if (errorFile != null) {
 
                             PrintStream err = new PrintStream(
-                                    new FileOutputStream(errorFile, appendError));
+                                    new FileOutputStream(errorFile, appendError)
+                            );
 
                             err.println(result);
 
