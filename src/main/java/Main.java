@@ -70,8 +70,7 @@ public class Main {
                         job.jobNumber,
                         marker,
                         "Done",
-                        cmd
-                );
+                        cmd);
 
                 jobsToRemove.add(job.jobNumber);
             }
@@ -98,8 +97,7 @@ public class Main {
                 "type",
                 "pwd",
                 "cd",
-                "jobs"
-        );
+                "jobs");
 
         while (true) {
 
@@ -295,8 +293,7 @@ public class Main {
                     if (outputFile != null) {
 
                         PrintStream out = new PrintStream(
-                                new FileOutputStream(outputFile, appendOutput)
-                        );
+                                new FileOutputStream(outputFile, appendOutput));
 
                         out.println(currentDirectory.getAbsolutePath());
 
@@ -342,8 +339,7 @@ public class Main {
                 catch (Exception e) {
 
                     System.err.println(
-                            "cd: " + path + ": No such file or directory"
-                    );
+                            "cd: " + path + ": No such file or directory");
 
                     continue;
                 }
@@ -359,8 +355,7 @@ public class Main {
                 } else {
 
                     System.err.println(
-                            "cd: " + path + ": No such file or directory"
-                    );
+                            "cd: " + path + ": No such file or directory");
                 }
             }
 
@@ -370,6 +365,7 @@ public class Main {
 
                 ArrayList<Job> activeJobs = new ArrayList<>();
 
+                // only alive jobs
                 for (int i = 1; i < jobCounter; i++) {
 
                     Job job = backgroundJobs.get(i);
@@ -387,16 +383,19 @@ public class Main {
 
                     String marker = " ";
 
-                    if (total == 1) {
+                    // newest job
+                    if (total >= 1 && i == total - 1) {
                         marker = "+";
                     }
 
-                    else if (i == total - 1) {
-                        marker = "+";
-                    }
-
-                    else if (i == total - 2) {
+                    // second newest job
+                    if (total >= 2 && i == total - 2) {
                         marker = "-";
+                    }
+
+                    // if only one job, no marker
+                    if (total == 1) {
+                        marker = " ";
                     }
 
                     String cmd = job.command;
@@ -408,8 +407,7 @@ public class Main {
                             job.jobNumber,
                             marker,
                             "Running",
-                            cmd
-                    );
+                            cmd);
                 }
             }
 
@@ -433,8 +431,7 @@ public class Main {
                     if (outputFile != null) {
 
                         PrintStream fileOut = new PrintStream(
-                                new FileOutputStream(outputFile, appendOutput)
-                        );
+                                new FileOutputStream(outputFile, appendOutput));
 
                         fileOut.println(output);
 
@@ -548,13 +545,10 @@ public class Main {
                                         new Job(
                                                 currentJob,
                                                 process,
-                                                input
-                                        )
-                                );
+                                                input));
 
                                 System.out.println(
-                                        "[" + currentJob + "] " + process.pid()
-                                );
+                                        "[" + currentJob + "] " + process.pid());
                             }
 
                             // foreground
@@ -563,10 +557,9 @@ public class Main {
                                 // stdout
                                 if (outputFile != null) {
 
-                                    FileOutputStream fos =
-                                            new FileOutputStream(
-                                                    outputFile,
-                                                    appendOutput);
+                                    FileOutputStream fos = new FileOutputStream(
+                                            outputFile,
+                                            appendOutput);
 
                                     process.getInputStream().transferTo(fos);
 
@@ -581,10 +574,9 @@ public class Main {
                                 // stderr
                                 if (errorFile != null) {
 
-                                    FileOutputStream errFos =
-                                            new FileOutputStream(
-                                                    errorFile,
-                                                    appendError);
+                                    FileOutputStream errFos = new FileOutputStream(
+                                            errorFile,
+                                            appendError);
 
                                     process.getErrorStream().transferTo(errFos);
 
