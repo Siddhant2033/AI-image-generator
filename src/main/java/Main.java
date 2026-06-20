@@ -219,30 +219,23 @@ public class Main {
 
                         try {
 
-                            ArrayList<String> commandArgs = new ArrayList<>();
+                            String[] execArgs = new String[parts.length];
 
-                            // command name as argv[0]
-                            commandArgs.add(command);
+                            execArgs[0] = file.getAbsolutePath();
 
-                            // remaining args
                             for (int i = 1; i < parts.length; i++) {
-                                commandArgs.add(parts[i]);
+                                execArgs[i] = parts[i];
                             }
 
-                            ProcessBuilder pb = new ProcessBuilder(commandArgs);
+                            Process process = Runtime.getRuntime().exec(
+                                    execArgs,
+                                    null,
+                                    currentDirectory);
 
-                            // actual executable location
-                            pb.command().set(0, file.getAbsolutePath());
-
-                            pb.directory(currentDirectory);
-
-                            pb.inheritIO();
-
-                            Process process = pb.start();
+                            process.getInputStream().transferTo(System.out);
+                            process.getErrorStream().transferTo(System.err);
 
                             process.waitFor();
-
-                            found = true;
 
                         } catch (Exception e) {
                             e.printStackTrace();
