@@ -337,13 +337,15 @@ public class Main {
 
             else if (command.equals("jobs")) {
 
+                ArrayList<Integer> jobsToRemove = new ArrayList<>();
+
                 ArrayList<Job> activeJobs = new ArrayList<>();
 
                 for (int i = 1; i < jobCounter; i++) {
 
                     Job job = backgroundJobs.get(i);
 
-                    if (job != null && job.process.isAlive()) {
+                    if (job != null) {
                         activeJobs.add(job);
                     }
                 }
@@ -353,6 +355,8 @@ public class Main {
                 for (int i = 0; i < total; i++) {
 
                     Job job = activeJobs.get(i);
+
+                    boolean alive = job.process.isAlive();
 
                     String marker = " ";
 
@@ -368,18 +372,46 @@ public class Main {
                         marker = "-";
                     }
 
-                    String cmd = job.command;
+                    // ================= RUNNING =================
 
-                    if (!cmd.trim().endsWith("&")) {
-                        cmd += " &";
+                    if (alive) {
+
+                        String cmd = job.command;
+
+                        if (!cmd.trim().endsWith("&")) {
+                            cmd += " &";
+                        }
+
+                        System.out.printf(
+                                "[%d]%s  %-24s%s%n",
+                                job.jobNumber,
+                                marker,
+                                "Running",
+                                cmd);
                     }
 
-                    System.out.printf(
-                            "[%d]%s  %-24s%s%n",
-                            job.jobNumber,
-                            marker,
-                            "Running",
-                            cmd);
+                    // ================= DONE =================
+
+                    else {
+
+                        String cmd = job.command;
+
+                        cmd = cmd.replaceAll("\\s*&\\s*$", "");
+
+                        System.out.printf(
+                                "[%d]%s  %-24s%s%n",
+                                job.jobNumber,
+                                marker,
+                                "Done",
+                                cmd);
+
+                        jobsToRemove.add(job.jobNumber);
+                    }
+                }
+
+                // remove completed jobs AFTER printing
+                for (Integer id : jobsToRemove) {
+                    backgroundJobs.remove(id);
                 }
             }
             // ================= ECHO =================
