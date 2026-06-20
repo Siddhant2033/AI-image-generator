@@ -7,6 +7,19 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+class Job {
+
+    int jobNumber;
+    Process process;
+    String command;
+
+    Job(int jobNumber, Process process, String command) {
+        this.jobNumber = jobNumber;
+        this.process = process;
+        this.command = command;
+    }
+}
+
 public class Main {
 
     public static void main(String[] args) {
@@ -17,7 +30,7 @@ public class Main {
 
         int jobCounter = 1;
 
-        Map<Integer, Process> backgroundJobs = new HashMap<>();
+        Map<Integer, Job> backgroundJobs = new HashMap<>();
 
         Set<String> builtins = Set.of(
                 "echo",
@@ -25,8 +38,7 @@ public class Main {
                 "type",
                 "pwd",
                 "cd",
-                "jobs"
-        );
+                "jobs");
 
         while (true) {
 
@@ -218,8 +230,7 @@ public class Main {
                     if (outputFile != null) {
 
                         PrintStream out = new PrintStream(
-                                new FileOutputStream(outputFile, appendOutput)
-                        );
+                                new FileOutputStream(outputFile, appendOutput));
 
                         out.println(currentDirectory.getAbsolutePath());
 
@@ -231,8 +242,7 @@ public class Main {
 
                     if (errorFile != null) {
                         new PrintStream(
-                                new FileOutputStream(errorFile, appendError)
-                        ).close();
+                                new FileOutputStream(errorFile, appendError)).close();
                     }
 
                 } catch (Exception e) {
@@ -275,8 +285,7 @@ public class Main {
                         if (errorFile != null) {
 
                             PrintStream err = new PrintStream(
-                                    new FileOutputStream(errorFile, appendError)
-                            );
+                                    new FileOutputStream(errorFile, appendError));
 
                             err.println("cd: " + path + ": No such file or directory");
 
@@ -308,8 +317,7 @@ public class Main {
                         if (errorFile != null) {
 
                             PrintStream err = new PrintStream(
-                                    new FileOutputStream(errorFile, appendError)
-                            );
+                                    new FileOutputStream(errorFile, appendError));
 
                             err.println("cd: " + path + ": No such file or directory");
 
@@ -328,7 +336,18 @@ public class Main {
             // ================= JOBS =================
 
             else if (command.equals("jobs")) {
-                // empty implementation
+
+                for (Job job : backgroundJobs.values()) {
+
+                    if (job.process.isAlive()) {
+
+                        System.out.printf(
+                                "[%d]+  %-24s %s%n",
+                                job.jobNumber,
+                                "Running",
+                                job.command + " &");
+                    }
+                }
             }
 
             // ================= ECHO =================
@@ -351,8 +370,7 @@ public class Main {
                     if (errorFile != null) {
 
                         PrintStream err = new PrintStream(
-                                new FileOutputStream(errorFile, appendError)
-                        );
+                                new FileOutputStream(errorFile, appendError));
 
                         err.close();
                     }
@@ -360,8 +378,7 @@ public class Main {
                     if (outputFile != null) {
 
                         PrintStream fileOut = new PrintStream(
-                                new FileOutputStream(outputFile, appendOutput)
-                        );
+                                new FileOutputStream(outputFile, appendOutput));
 
                         fileOut.println(output);
 
@@ -471,11 +488,14 @@ public class Main {
 
                                 int currentJob = jobCounter++;
 
-                                backgroundJobs.put(currentJob, process);
-
+                                backgroundJobs.put(
+                                        currentJob,
+                                        new Job(
+                                                currentJob,
+                                                process,
+                                                input));
                                 System.out.println(
-                                        "[" + currentJob + "] " + process.pid()
-                                );
+                                        "[" + currentJob + "] " + process.pid());
                             }
 
                             // ================= FOREGROUND =================
@@ -485,10 +505,9 @@ public class Main {
                                 // STDOUT
                                 if (outputFile != null) {
 
-                                    FileOutputStream fos =
-                                            new FileOutputStream(
-                                                    outputFile,
-                                                    appendOutput);
+                                    FileOutputStream fos = new FileOutputStream(
+                                            outputFile,
+                                            appendOutput);
 
                                     process.getInputStream().transferTo(fos);
 
@@ -503,10 +522,9 @@ public class Main {
                                 // STDERR
                                 if (errorFile != null) {
 
-                                    FileOutputStream errFos =
-                                            new FileOutputStream(
-                                                    errorFile,
-                                                    appendError);
+                                    FileOutputStream errFos = new FileOutputStream(
+                                            errorFile,
+                                            appendError);
 
                                     process.getErrorStream().transferTo(errFos);
 
@@ -540,8 +558,7 @@ public class Main {
                         if (errorFile != null) {
 
                             PrintStream err = new PrintStream(
-                                    new FileOutputStream(errorFile, appendError)
-                            );
+                                    new FileOutputStream(errorFile, appendError));
 
                             err.println(result);
 
