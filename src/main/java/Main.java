@@ -158,8 +158,7 @@ public class Main {
 
                     if (outputFile != null) {
 
-                        PrintStream out =
-                                new PrintStream(new FileOutputStream(outputFile));
+                        PrintStream out = new PrintStream(new FileOutputStream(outputFile));
 
                         out.println(currentDirectory.getAbsolutePath());
 
@@ -208,8 +207,7 @@ public class Main {
 
                         if (errorFile != null) {
 
-                            PrintStream err =
-                                    new PrintStream(new FileOutputStream(errorFile));
+                            PrintStream err = new PrintStream(new FileOutputStream(errorFile));
 
                             err.println("cd: " + path + ": No such file or directory");
 
@@ -240,8 +238,7 @@ public class Main {
 
                         if (errorFile != null) {
 
-                            PrintStream err =
-                                    new PrintStream(new FileOutputStream(errorFile));
+                            PrintStream err = new PrintStream(new FileOutputStream(errorFile));
 
                             err.println("cd: " + path + ": No such file or directory");
 
@@ -274,10 +271,18 @@ public class Main {
 
                 try {
 
+                    // create stderr redirect file even if empty
+                    if (errorFile != null) {
+
+                        PrintStream err = new PrintStream(new FileOutputStream(errorFile));
+
+                        err.close();
+                    }
+
+                    // stdout handling
                     if (outputFile != null) {
 
-                        PrintStream fileOut =
-                                new PrintStream(new FileOutputStream(outputFile));
+                        PrintStream fileOut = new PrintStream(new FileOutputStream(outputFile));
 
                         fileOut.println(output);
 
@@ -310,8 +315,7 @@ public class Main {
 
                         if (outputFile != null) {
 
-                            PrintStream out =
-                                    new PrintStream(new FileOutputStream(outputFile));
+                            PrintStream out = new PrintStream(new FileOutputStream(outputFile));
 
                             out.println(result);
 
@@ -340,15 +344,13 @@ public class Main {
 
                     if (file.exists() && file.canExecute()) {
 
-                        String result =
-                                cmd + " is " + file.getAbsolutePath();
+                        String result = cmd + " is " + file.getAbsolutePath();
 
                         try {
 
                             if (outputFile != null) {
 
-                                PrintStream out =
-                                        new PrintStream(new FileOutputStream(outputFile));
+                                PrintStream out = new PrintStream(new FileOutputStream(outputFile));
 
                                 out.println(result);
 
@@ -376,8 +378,7 @@ public class Main {
 
                         if (errorFile != null) {
 
-                            PrintStream err =
-                                    new PrintStream(new FileOutputStream(errorFile));
+                            PrintStream err = new PrintStream(new FileOutputStream(errorFile));
 
                             err.println(result);
 
@@ -422,14 +423,12 @@ public class Main {
                             Process process = Runtime.getRuntime().exec(
                                     execArgs,
                                     null,
-                                    file.getParentFile()
-                            );
+                                    file.getParentFile());
 
                             // STDOUT
                             if (outputFile != null) {
 
-                                FileOutputStream fos =
-                                        new FileOutputStream(outputFile);
+                                FileOutputStream fos = new FileOutputStream(outputFile);
 
                                 process.getInputStream().transferTo(fos);
 
@@ -444,8 +443,7 @@ public class Main {
                             // STDERR
                             if (errorFile != null) {
 
-                                FileOutputStream errFos =
-                                        new FileOutputStream(errorFile);
+                                FileOutputStream errFos = new FileOutputStream(errorFile);
 
                                 process.getErrorStream().transferTo(errFos);
 
@@ -477,8 +475,7 @@ public class Main {
 
                         if (errorFile != null) {
 
-                            PrintStream err =
-                                    new PrintStream(new FileOutputStream(errorFile));
+                            PrintStream err = new PrintStream(new FileOutputStream(errorFile));
 
                             err.println(result);
 
