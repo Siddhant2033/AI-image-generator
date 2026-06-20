@@ -19,8 +19,6 @@ public class Main {
 
             String input = scanner.nextLine();
 
-          
-
             ArrayList<String> partsList = new ArrayList<>();
 
             StringBuilder current = new StringBuilder();
@@ -60,7 +58,6 @@ public class Main {
                         }
                     }
 
-               
                     else {
                         current.append('\\');
                     }
@@ -70,12 +67,10 @@ public class Main {
                     inSingleQuote = !inSingleQuote;
                 }
 
-         
                 else if (ch == '"' && !inSingleQuote) {
                     inDoubleQuote = !inDoubleQuote;
                 }
 
-             
                 else if (Character.isWhitespace(ch)
                         && !inSingleQuote
                         && !inDoubleQuote) {
@@ -86,7 +81,6 @@ public class Main {
                     }
                 }
 
-             
                 else {
                     current.append(ch);
                 }
@@ -104,7 +98,6 @@ public class Main {
 
             String command = parts[0];
 
-
             if (command.equals("exit")) {
                 break;
             }
@@ -112,8 +105,6 @@ public class Main {
             else if (command.equals("pwd")) {
                 System.out.println(currentDirectory.getAbsolutePath());
             }
-
-    
 
             else if (command.equals("cd")) {
 
@@ -125,17 +116,14 @@ public class Main {
 
                 File newDir;
 
-             
                 if (path.equals("~")) {
                     newDir = new File(System.getenv("HOME"));
                 }
 
-         
                 else if (path.startsWith("/")) {
                     newDir = new File(path);
                 }
 
-           
                 else {
                     newDir = new File(currentDirectory, path);
                 }
@@ -160,8 +148,6 @@ public class Main {
                 }
             }
 
-      
-
             else if (command.equals("echo")) {
 
                 StringBuilder output = new StringBuilder();
@@ -178,8 +164,6 @@ public class Main {
                 System.out.println(output);
             }
 
-            
-
             else if (command.equals("type")) {
 
                 if (parts.length < 2) {
@@ -188,13 +172,11 @@ public class Main {
 
                 String cmd = parts[1];
 
-         
                 if (builtins.contains(cmd)) {
                     System.out.println(cmd + " is a shell builtin");
                     continue;
                 }
 
-        
                 String pathEnv = System.getenv("PATH");
 
                 String[] paths = pathEnv.split(File.pathSeparator);
@@ -221,7 +203,6 @@ public class Main {
                 }
             }
 
-
             else {
 
                 String pathEnv = System.getenv("PATH");
@@ -238,10 +219,15 @@ public class Main {
 
                         try {
 
-                            parts[0] = file.getAbsolutePath();
+                            ArrayList<String> commandArgs = new ArrayList<>();
 
-                            ProcessBuilder pb =
-                                    new ProcessBuilder(parts);
+                            commandArgs.add(file.getAbsolutePath());
+
+                            for (int i = 1; i < parts.length; i++) {
+                                commandArgs.add(parts[i]);
+                            }
+
+                            ProcessBuilder pb = new ProcessBuilder(commandArgs);
 
                             pb.directory(currentDirectory);
 
