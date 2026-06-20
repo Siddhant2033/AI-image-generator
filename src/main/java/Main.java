@@ -454,11 +454,14 @@ public class Main {
                                 execArgs[i] = parts[i];
                             }
 
-                            Process process = Runtime.getRuntime().exec(
-                                    execArgs,
-                                    null,
-                                    file.getParentFile()
-                            );
+                            ProcessBuilder pb = new ProcessBuilder(execArgs);
+
+                            pb.directory(file.getParentFile());
+
+                            // IMPORTANT FOR THIS STAGE
+                            pb.inheritIO();
+
+                            Process process = pb.start();
 
                             // BACKGROUND PROCESS
                             if (runInBackground) {
@@ -474,42 +477,6 @@ public class Main {
 
                             // FOREGROUND PROCESS
                             else {
-
-                                // STDOUT
-                                if (outputFile != null) {
-
-                                    FileOutputStream fos =
-                                            new FileOutputStream(
-                                                    outputFile,
-                                                    appendOutput);
-
-                                    process.getInputStream().transferTo(fos);
-
-                                    fos.close();
-
-                                } else {
-
-                                    process.getInputStream()
-                                            .transferTo(System.out);
-                                }
-
-                                // STDERR
-                                if (errorFile != null) {
-
-                                    FileOutputStream errFos =
-                                            new FileOutputStream(
-                                                    errorFile,
-                                                    appendError);
-
-                                    process.getErrorStream().transferTo(errFos);
-
-                                    errFos.close();
-
-                                } else {
-
-                                    process.getErrorStream()
-                                            .transferTo(System.err);
-                                }
 
                                 process.waitFor();
                             }
