@@ -18,7 +18,6 @@ public class Main {
             System.out.print("$ ");
 
             String input = scanner.nextLine().trim();
-
             ArrayList<String> partsList = new ArrayList<>();
 
             StringBuilder current = new StringBuilder();
@@ -30,18 +29,23 @@ public class Main {
 
                 char ch = input.charAt(i);
 
-                // Single quote
-                if (ch == '\'' && !inDoubleQuote) {
+                if (ch == '\\' && !inSingleQuote && !inDoubleQuote) {
+
+                    if (i + 1 < input.length()) {
+                        current.append(input.charAt(i + 1));
+                        i++;
+                    }
+                }
+
+                else if (ch == '\'' && !inDoubleQuote) {
                     inSingleQuote = !inSingleQuote;
                 }
 
-                // Double quote
                 else if (ch == '"' && !inSingleQuote) {
                     inDoubleQuote = !inDoubleQuote;
                 }
 
-                // Space outside quotes
-                else if (ch == ' ' && !inSingleQuote && !inDoubleQuote) {
+                else if (Character.isWhitespace(ch) && !inSingleQuote && !inDoubleQuote) {
 
                     if (current.length() > 0) {
                         partsList.add(current.toString());
@@ -49,7 +53,6 @@ public class Main {
                     }
                 }
 
-                // Normal character
                 else {
                     current.append(ch);
                 }
