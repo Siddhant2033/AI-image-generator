@@ -24,16 +24,24 @@ public class Main {
             StringBuilder current = new StringBuilder();
 
             boolean inSingleQuote = false;
+            boolean inDoubleQuote = false;
 
             for (int i = 0; i < input.length(); i++) {
 
                 char ch = input.charAt(i);
 
-                if (ch == '\'') {
+                // Single quote
+                if (ch == '\'' && !inDoubleQuote) {
                     inSingleQuote = !inSingleQuote;
                 }
 
-                else if (ch == ' ' && !inSingleQuote) {
+                // Double quote
+                else if (ch == '"' && !inSingleQuote) {
+                    inDoubleQuote = !inDoubleQuote;
+                }
+
+                // Space outside quotes
+                else if (ch == ' ' && !inSingleQuote && !inDoubleQuote) {
 
                     if (current.length() > 0) {
                         partsList.add(current.toString());
@@ -41,6 +49,7 @@ public class Main {
                     }
                 }
 
+                // Normal character
                 else {
                     current.append(ch);
                 }
@@ -119,7 +128,6 @@ public class Main {
                 System.out.println(output);
             }
 
-            
             else if (command.equals("type")) {
 
                 if (parts.length < 2) {
