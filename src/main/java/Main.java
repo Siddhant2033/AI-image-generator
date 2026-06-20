@@ -337,25 +337,51 @@ public class Main {
 
             else if (command.equals("jobs")) {
 
-                for (Job job : backgroundJobs.values()) {
+                ArrayList<Job> activeJobs = new ArrayList<>();
 
-                    if (job.process.isAlive()) {
+                for (int i = 1; i < jobCounter; i++) {
 
-                        String cmd = job.command;
+                    Job job = backgroundJobs.get(i);
 
-                        if (!cmd.trim().endsWith("&")) {
-                            cmd += " &";
-                        }
-
-                        System.out.printf(
-                                "[%d]+  %-24s%s%n",
-                                job.jobNumber,
-                                "Running",
-                                cmd);
+                    if (job != null && job.process.isAlive()) {
+                        activeJobs.add(job);
                     }
                 }
-            }
 
+                int total = activeJobs.size();
+
+                for (int i = 0; i < total; i++) {
+
+                    Job job = activeJobs.get(i);
+
+                    String marker = " ";
+
+                    if (total == 1) {
+                        marker = "+";
+                    }
+
+                    else if (i == total - 1) {
+                        marker = "+";
+                    }
+
+                    else if (i == total - 2) {
+                        marker = "-";
+                    }
+
+                    String cmd = job.command;
+
+                    if (!cmd.trim().endsWith("&")) {
+                        cmd += " &";
+                    }
+
+                    System.out.printf(
+                            "[%d]%s  %-24s%s%n",
+                            job.jobNumber,
+                            marker,
+                            "Running",
+                            cmd);
+                }
+            }
             // ================= ECHO =================
 
             else if (command.equals("echo")) {
