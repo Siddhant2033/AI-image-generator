@@ -1,6 +1,7 @@
 import java.io.File;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -85,7 +86,38 @@ public class Main {
                 }
             } else {
 
-                String[] parts = input.split(" ");
+                ArrayList<String> partsList = new ArrayList<>();
+
+                StringBuilder current = new StringBuilder();
+
+                boolean inSingleQuote = false;
+
+                for (int i = 0; i < input.length(); i++) {
+
+                    char ch = input.charAt(i);
+
+                    if (ch == '\'') {
+                        inSingleQuote = !inSingleQuote;
+                    }
+
+                    else if (ch == ' ' && !inSingleQuote) {
+
+                        if (current.length() > 0) {
+                            partsList.add(current.toString());
+                            current.setLength(0);
+                        }
+                    }
+
+                    else {
+                        current.append(ch);
+                    }
+                }
+
+                if (current.length() > 0) {
+                    partsList.add(current.toString());
+                }
+
+                String[] parts = partsList.toArray(new String[0]);
                 String command = parts[0];
 
                 String pathEnv = System.getenv("PATH");
