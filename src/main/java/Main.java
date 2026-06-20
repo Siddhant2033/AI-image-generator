@@ -366,9 +366,39 @@ public class Main {
 
             else if (command.equals("jobs")) {
 
+                // FIRST: reap completed jobs
+                ArrayList<Integer> completed = new ArrayList<>();
+
+                for (int i = 1; i < jobCounter; i++) {
+
+                    Job job = backgroundJobs.get(i);
+
+                    if (job != null && !job.process.isAlive()) {
+
+                        String marker = " ";
+
+                        String cmd = job.command
+                                .replaceAll("\\s*&\\s*$", "");
+
+                        System.out.printf(
+                                "[%d]%s  %-24s%s%n",
+                                job.jobNumber,
+                                marker,
+                                "Done",
+                                cmd);
+
+                        completed.add(i);
+                    }
+                }
+
+                // remove completed jobs
+                for (Integer id : completed) {
+                    backgroundJobs.remove(id);
+                }
+
+                // NOW calculate active jobs
                 ArrayList<Job> activeJobs = new ArrayList<>();
 
-                // ONLY alive jobs
                 for (int i = 1; i < jobCounter; i++) {
 
                     Job job = backgroundJobs.get(i);
@@ -386,19 +416,18 @@ public class Main {
 
                     String marker = " ";
 
-                    // newest running job
+                    // newest
                     if (i == total - 1) {
                         marker = "+";
                     }
 
-                    // second newest running job
+                    // second newest
                     else if (i == total - 2) {
                         marker = "-";
                     }
 
-                    String cmd = job.command;
-
-                    cmd = cmd.replaceAll("\\s*&\\s*$", "") + " &";
+                    String cmd = job.command
+                            .replaceAll("\\s*&\\s*$", "") + " &";
 
                     System.out.printf(
                             "[%d]%s  %-24s%s%n",
@@ -408,7 +437,6 @@ public class Main {
                             cmd);
                 }
             }
-
             // ================= ECHO =================
 
             else if (command.equals("echo")) {
