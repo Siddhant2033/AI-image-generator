@@ -29,11 +29,36 @@ public class Main {
 
                 char ch = input.charAt(i);
 
-                if (ch == '\\' && !inSingleQuote && !inDoubleQuote) {
+                if (ch == '\\') {
 
-                    if (i + 1 < input.length()) {
-                        current.append(input.charAt(i + 1));
-                        i++;
+                    if (!inSingleQuote && !inDoubleQuote) {
+
+                        if (i + 1 < input.length()) {
+                            current.append(input.charAt(i + 1));
+                            i++;
+                        }
+                    }
+
+                    else if (inDoubleQuote) {
+
+                        if (i + 1 < input.length()) {
+
+                            char next = input.charAt(i + 1);
+
+                            if (next == '"' || next == '\\') {
+                                current.append(next);
+                                i++;
+                            } else {
+
+                                current.append('\\');
+                            }
+                        } else {
+                            current.append('\\');
+                        }
+                    }
+
+                    else {
+                        current.append('\\');
                     }
                 }
 
