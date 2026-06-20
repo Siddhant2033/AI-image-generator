@@ -201,6 +201,14 @@ public class Main {
                         System.out.println(currentDirectory.getAbsolutePath());
                     }
 
+                    // create empty stderr file if needed
+                    if (errorFile != null) {
+                        new PrintStream(
+                                new FileOutputStream(
+                                        errorFile,
+                                        appendError)).close();
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -268,6 +276,18 @@ public class Main {
                     System.setProperty(
                             "user.dir",
                             currentDirectory.getAbsolutePath());
+
+                    // create empty stderr file if needed
+                    try {
+                        if (errorFile != null) {
+                            new PrintStream(
+                                    new FileOutputStream(
+                                            errorFile,
+                                            appendError)).close();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                 } else {
 
@@ -378,6 +398,14 @@ public class Main {
                             System.out.println(result);
                         }
 
+                        // create empty stderr file
+                        if (errorFile != null) {
+                            new PrintStream(
+                                    new FileOutputStream(
+                                            errorFile,
+                                            appendError)).close();
+                        }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -416,6 +444,14 @@ public class Main {
 
                             } else {
                                 System.out.println(result);
+                            }
+
+                            // create empty stderr file
+                            if (errorFile != null) {
+                                new PrintStream(
+                                        new FileOutputStream(
+                                                errorFile,
+                                                appendError)).close();
                             }
 
                         } catch (Exception e) {
